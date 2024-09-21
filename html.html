@@ -1,0 +1,134 @@
+<!-- Created by Raj Singh --> 
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Calculator</title>
+  
+  <!-- HTML -->
+  
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="html.css">
+</head>
+
+<body>
+  <div class="calculator">
+    <div class="calculator-screen" id="calculator-screen">0</div>
+    <div class="calculator-keys">
+      <button type="button" class="all-clear" onclick="allclear()" >AC</button>
+      <button type="button" class="clear-entry" onclick="clearentry()" >CE</button>
+      <button type="button" class="operator" onclick="dontknow()" ></button>
+      <button type="button" class="operator" onclick="handleoperator('/')" >&div;</button>
+      <button type="button" onclick="inputdigit('7')" >7</button>
+      <button type="button" onclick="inputdigit('8')" >8</button>
+      <button type="button" onclick="inputdigit('9')" >9</button>
+      <button type="button" class="operator" onclick="handleoperator('*')" >&times;</button>
+      <button type="button" onclick="inputdigit('4')" >4</button>
+      <button type="button" onclick="inputdigit('5')" >5</button>
+      <button type="button" onclick="inputdigit('6')" >6</button>
+      <button type="button" class="operator" onclick="handleoperator('+')" >+</button>
+      <button type="button" onclick="inputdigit('1')" >1</button>
+      <button type="button" onclick="inputdigit('2')" >2</button>
+      <button type="button" onclick="inputdigit('3')" >3</button>
+      <button type="button" class="operator" onclick="handleoperator('-')" >-</button>
+      <button type="button" onclick="togglesign()" >+/-</button>
+      <button type="button" onclick="inputdigit('0')" >0</button>
+      <button type="button" onclick="inputdecimal()" >.</button>
+      <button type="button" class="operator" onclick="handleoperator('=')" >=</button>
+    </div>
+  </div>
+  <script>
+let screen = document.getElementById('calculator-screen');
+let screenValue = screen.innerText;
+let firstValue = 0;
+let previousOperator = null;
+let waitingForSecondValue = false;
+
+function inputdigit(digit) {
+  if (waitingForSecondValue) {
+    waitingForSecondValue = false;
+    screenValue = digit;
+  }
+  else {
+    screenValue = screenValue === '0' ? digit : screenValue + digit;
+  }
+  
+  updatescreendisplay();
+};
+
+function inputdecimal() {
+  if (waitingForSecondValue) {
+    inputdigit('0.');
+  };
+  
+  if (!screenValue.includes('.')) {
+    screenValue += '.';
+  }
+  
+  updatescreendisplay();
+};
+
+function togglesign() {
+  screenValue *= -1;
+  
+  if (waitingForSecondValue) {
+    firstValue = screenValue;
+  };
+  
+  updatescreendisplay();
+};
+
+function clearentry() {
+  screenValue = screenValue.slice(0,-1);
+  
+  if (screenValue.length === 0) {
+    screenValue = '0';
+  };
+  
+  updatescreendisplay();
+};
+
+function allclear() {
+  firstValue = 0;
+  screenValue = '0';
+  
+  updatescreendisplay();
+};
+
+function handleoperator(currentOperator) {
+  if (waitingForSecondValue) {
+    previousOperator = currentOperator;
+    return;
+  };
+  
+  firstValue = calculate(firstValue,previousOperator,parseFloat(screenValue));
+  screenValue = firstValue;
+  previousOperator = currentOperator;
+  waitingForSecondValue = true;
+  updatescreendisplay();
+};
+
+function calculate(first,operator,second) {
+  if (operator === '+') return first + second;
+  if (operator === '-') return first - second;
+  if (operator === '*') return first * second;
+  if (operator === '/') return first / second;
+  
+  return second;
+};
+
+function updatescreendisplay() {
+  screen.textContent = screenValue;
+};
+
+function dontknow() {
+  alert('What operation should I add here?')
+}
+  </script>
+</body>
+</html>
